@@ -1,5 +1,9 @@
 import unittest
+from types import SimpleNamespace
 
+from google.genai import errors
+
+from worksheet_agents.gemini import GeminiModel
 from worksheet_agents.models import (
     Exercise,
     LessonPlan,
@@ -62,6 +66,19 @@ class FakeModel:
 
 
 class WorkflowTests(unittest.TestCase):
+    def test_demand_error_names_the_failed_model(self):
+        class FailingModels:
+            def generate_content(self, **kwargs):
+                raise errors.ClientError(
+                    503, {"error": {"code": 503, "message": "high demand", "status": "UNAVAILABLE"}}
+                )
+
+        model = GeminiModel.__new__(GeminiModel)
+        model.model_name = "gemini-3.6-flash"
+        model.client = SimpleNamespace(models=FailingModels())
+        with self.assertRaisesRegex(RuntimeError, "gemini-3.6-flash"):
+            model.generate("Plan a lesson", LessonPlan)
+
     def test_gemini_output_schemas_avoid_unsupported_keywords(self):
         def keywords(value):
             if isinstance(value, dict):
