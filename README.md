@@ -59,7 +59,7 @@ Or provide the four fields directly:
 python -m worksheet_agents --subject Science --topic "Food Chains" --grade 5 --objective "Explain how energy moves through a simple food chain" --output outputs/food_chains.md
 ```
 
-The review JSON contains the model ID, input, approval status, revision count, and any unresolved issues. The three committed examples cover different subjects and grades and were generated with `gemini-3.5-flash-lite`.
+The review JSON contains the model ID, input, approval status, revision count, and any unresolved issues. The three included examples cover different subjects and grades and were generated with `gemini-3.8-flash`.
 
 If Gemini returns `503 UNAVAILABLE` after its built-in retries, try again later or choose the lower cost Flash-Lite model for the run:
 

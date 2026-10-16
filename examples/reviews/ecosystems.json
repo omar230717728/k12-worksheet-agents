@@ -1,6 +1,6 @@
 {
   "status": "approved",
-  "model": "gemini-3.5-flash-lite",
+  "model": "gemini-3.8-flash",
   "revisions": 0,
   "request": {
     "subject": "Science",
