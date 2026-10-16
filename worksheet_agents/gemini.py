@@ -32,6 +32,11 @@ class GeminiModel:
                 ),
             )
         except errors.APIError as error:
+            if error.code == 503:
+                raise RuntimeError(
+                    "Gemini is temporarily unavailable after the SDK's retries. "
+                    "Try again later or rerun with --model gemini-3.6-flash."
+                ) from error
             raise RuntimeError(f"Gemini API error: {error}") from error
         if not response.text:
             raise RuntimeError("Gemini returned no text; worksheet generation stopped.")

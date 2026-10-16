@@ -50,6 +50,14 @@ python -m worksheet_agents --subject Science --topic "Food Chains" --grade 5 --o
 
 The CLI writes a review JSON beside each result. It contains the model ID, input, approval status, revision count, and any unresolved issues. The three example input files cover different subjects and grades. Run each one with the matching `.md` output name in `examples/` to produce the three outputs for submission.
 
+If Gemini returns `503 UNAVAILABLE` after its built-in retries, try again later or choose another supported model for the run:
+
+```powershell
+python -m worksheet_agents --input examples/linear_functions.input.json --output examples/linear_functions.md --model gemini-3.6-flash
+```
+
+The chosen model is recorded in the review JSON. Mention the model used for the committed examples in this README.
+
 ## Limitations and possible enhancements
 
 The Reviewer is another model call and can miss an error, particularly in calculations. A teacher should inspect material before classroom use. Model responses can vary between runs. The tool does not currently verify alignment to a particular curriculum. Possible enhancements include subject-specific calculation checks, retrieval from an approved curriculum collection, and LangGraph if the workflow grows to need persistence or human approval steps.
