@@ -1,11 +1,11 @@
 from pydantic import BaseModel, ConfigDict, Field, field_validator, model_validator
 
 
-class StrictModel(BaseModel):
+class StrictInputModel(BaseModel):
     model_config = ConfigDict(extra="forbid")
 
 
-class WorksheetRequest(StrictModel):
+class WorksheetRequest(StrictInputModel):
     subject: str = Field(min_length=1)
     topic: str = Field(min_length=1)
     grade: str = Field(min_length=1)
@@ -20,39 +20,53 @@ class WorksheetRequest(StrictModel):
         return value
 
 
-class LessonPlan(StrictModel):
-    concepts: list[str] = Field(min_length=1)
-    teaching_sequence: list[str] = Field(min_length=1)
-    exercise_targets: list[str] = Field(min_length=1)
-    grade_guidance: str = Field(min_length=1)
+class LessonPlan(BaseModel):
+    concepts: list[str]
+    teaching_sequence: list[str]
+    exercise_targets: list[str]
+    grade_guidance: str
+
+    @model_validator(mode="after")
+    def require_content(self) -> "LessonPlan":
+        if not all((self.concepts, self.teaching_sequence, self.exercise_targets, self.grade_guidance.strip())):
+            raise ValueError("lesson plan sections must not be empty")
+        return self
 
 
-class WorkedExample(StrictModel):
+class WorkedExample(BaseModel):
     title: str
     problem: str
-    steps: list[str] = Field(min_length=1)
+    steps: list[str]
     answer: str
 
 
-class Exercise(StrictModel):
+class Exercise(BaseModel):
     question: str
     solution: str
 
 
-class Worksheet(StrictModel):
-    explanation: str = Field(min_length=1)
-    worked_examples: list[WorkedExample] = Field(min_length=1)
-    summary: list[str] = Field(min_length=1)
-    exercises: list[Exercise] = Field(min_length=3)
+class Worksheet(BaseModel):
+    explanation: str
+    worked_examples: list[WorkedExample]
+    summary: list[str]
+    exercises: list[Exercise]
+
+    @model_validator(mode="after")
+    def require_sections(self) -> "Worksheet":
+        if not self.explanation.strip() or not self.worked_examples or not self.summary:
+            raise ValueError("worksheet explanation, examples, and summary are required")
+        if len(self.exercises) < 3:
+            raise ValueError("worksheet needs at least three exercises")
+        return self
 
 
-class ReviewIssue(StrictModel):
+class ReviewIssue(BaseModel):
     section: str
     problem: str
     requested_fix: str
 
 
-class Review(StrictModel):
+class Review(BaseModel):
     approved: bool
     issues: list[ReviewIssue]
 

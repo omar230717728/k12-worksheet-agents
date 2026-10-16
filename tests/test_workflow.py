@@ -62,6 +62,21 @@ class FakeModel:
 
 
 class WorkflowTests(unittest.TestCase):
+    def test_gemini_output_schemas_avoid_unsupported_keywords(self):
+        def keywords(value):
+            if isinstance(value, dict):
+                for key, nested in value.items():
+                    yield key
+                    yield from keywords(nested)
+            elif isinstance(value, list):
+                for nested in value:
+                    yield from keywords(nested)
+
+        for model in (LessonPlan, Worksheet, Review):
+            schema_keywords = set(keywords(model.model_json_schema()))
+            self.assertNotIn("additionalProperties", schema_keywords)
+            self.assertNotIn("minLength", schema_keywords)
+
     def test_reviewer_feedback_causes_one_revision(self):
         model = FakeModel([PLAN, worksheet("3"), REJECTED, worksheet("2"), APPROVED])
         result = run_workflow(REQUEST, model)

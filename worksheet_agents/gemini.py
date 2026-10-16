@@ -20,16 +20,19 @@ class GeminiModel:
         self.model_name = model_name
 
     def generate(self, prompt: str, schema: type[T]) -> T:
-        from google.genai import types
+        from google.genai import errors, types
 
-        response = self.client.models.generate_content(
-            model=self.model_name,
-            contents=prompt,
-            config=types.GenerateContentConfig(
-                response_mime_type="application/json",
-                response_schema=schema,
-            ),
-        )
+        try:
+            response = self.client.models.generate_content(
+                model=self.model_name,
+                contents=prompt,
+                config=types.GenerateContentConfig(
+                    response_mime_type="application/json",
+                    response_schema=schema,
+                ),
+            )
+        except errors.APIError as error:
+            raise RuntimeError(f"Gemini API error: {error}") from error
         if not response.text:
             raise RuntimeError("Gemini returned no text; worksheet generation stopped.")
         return schema.model_validate_json(response.text)
