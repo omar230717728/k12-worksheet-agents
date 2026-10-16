@@ -10,6 +10,15 @@ A small Python multi-agent system that turns a subject, topic, grade, and learni
 4. The **Reviewer** independently checks objective coverage, grade suitability, facts, examples, and solutions. It returns an approval decision with specific issues.
 5. On rejection, the Writer gets the review issues and revises once by default. The Reviewer checks the revision. The program saves an approved worksheet or a clearly marked draft with its review report.
 
+Example files have matching names in separate folders:
+
+| Folder | Contents |
+| --- | --- |
+| `examples/inputs/` | The four input fields as JSON |
+| `examples/worksheets/` | Approved student worksheets as Markdown |
+| `examples/reviews/` | Review decisions and model metadata as JSON |
+| `examples/drafts/` | Rejected drafts, when a review still fails |
+
 The roles use separate prompts and structured inputs and outputs. The workflow is coordinated by ordinary Python functions. This makes the handoff between agents visible without adding a graph framework for a fixed sequence.
 
 ## Design decisions
@@ -17,7 +26,7 @@ The roles use separate prompts and structured inputs and outputs. The workflow i
 - **Gemini model:** The default model is `gemini-3.8-flash` through Google's `google-genai` SDK. The exact model for a run is recorded in its review JSON. Use `--model` to select another available Gemini model. Output quality depends on the selected model.
 - **Pydantic:** Validates the request and agent output shapes. It cannot validate factual correctness.
 - **Bounded review:** One revision limits API calls and prevents an endless loop. `--max-revisions` can change the limit.
-- **Safe failure:** If the final review rejects the material, the program returns exit code 2, saves `<name>.draft.md` and `<name>.review.json`, and does not create an approved output at the requested path. API or input errors return exit code 1.
+- **Safe failure:** If the final review rejects the material, the program returns exit code 2, saves `examples/drafts/<name>.md` and `examples/reviews/<name>.json`, and does not create an approved output at the requested path. API or input errors return exit code 1.
 - **No retrieval:** The input does not specify a curriculum or reference collection, so the current workflow relies on the model and review. A curated curriculum source and retrieval could be added later.
 
 ## Install and run
@@ -36,11 +45,13 @@ Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey
 $env:GEMINI_API_KEY = "your-key-here"
 ```
 
-Generate a worksheet from a JSON request:
+Generate a worksheet by input name. The program reads `examples/inputs/linear_functions.json`, then writes `examples/worksheets/linear_functions.md` and `examples/reviews/linear_functions.json`:
 
 ```powershell
-python -m worksheet_agents --input examples/linear_functions.input.json --output examples/linear_functions.md
+python -m worksheet_agents --input linear_functions
 ```
+
+You can also pass a JSON file path with `--input`, and optionally choose a Markdown path with `--output`.
 
 Or provide the four fields directly:
 
@@ -48,15 +59,15 @@ Or provide the four fields directly:
 python -m worksheet_agents --subject Science --topic "Food Chains" --grade 5 --objective "Explain how energy moves through a simple food chain" --output outputs/food_chains.md
 ```
 
-The CLI writes a review JSON beside each result. It contains the model ID, input, approval status, revision count, and any unresolved issues. The three example input files cover different subjects and grades. Run each one with the matching `.md` output name in `examples/` to produce the three outputs for submission.
+The review JSON contains the model ID, input, approval status, revision count, and any unresolved issues. The three committed examples cover different subjects and grades and were generated with `gemini-3.5-flash-lite`.
 
 If Gemini returns `503 UNAVAILABLE` after its built-in retries, try again later or choose the lower cost Flash-Lite model for the run:
 
 ```powershell
-python -m worksheet_agents --input examples/linear_functions.input.json --output examples/linear_functions.md --model gemini-3.5-flash-lite
+python -m worksheet_agents --input linear_functions --model gemini-3.5-flash-lite
 ```
 
-The chosen model is recorded in the review JSON. Mention the model used for the committed examples in this README.
+The chosen model is recorded in the review JSON.
 
 ## Limitations and possible enhancements
 
@@ -64,4 +75,4 @@ The Reviewer is another model call and can miss an error, particularly in calcul
 
 ## Repository submission
 
-For the assignment, run all three example inputs and commit their approved Markdown outputs and review reports. Create a private GitHub repository and invite `NLeins` and `JGonnermann` as collaborators.
+The three approved example worksheets and review reports are included. Create a private GitHub repository and invite `NLeins` and `JGonnermann` as collaborators.

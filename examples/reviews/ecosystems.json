@@ -1,0 +1,15 @@
+{
+  "status": "approved",
+  "model": "gemini-3.5-flash-lite",
+  "revisions": 0,
+  "request": {
+    "subject": "Science",
+    "topic": "Food Chains and Ecosystems",
+    "grade": "5",
+    "learning_objective": "Identify producers, consumers, and decomposers; explain how energy moves through a simple food chain; and predict one effect when an organism is removed."
+  },
+  "review": {
+    "approved": true,
+    "issues": []
+  }
+}
