@@ -47,12 +47,14 @@ The main functions follow the path of one request:
 
 Clone the private repository after accepting a collaborator invitation:
 
-```powershell
+```sh
 git clone https://github.com/omar230717728/k12-worksheet-agents.git
 cd k12-worksheet-agents
 ```
 
-Use Python 3.10 or newer. Create and activate a virtual environment, then install dependencies:
+Use Python 3.10 or newer. Create and activate a virtual environment, then install dependencies.
+
+**Windows PowerShell:**
 
 ```powershell
 py -3 -m venv .venv
@@ -60,10 +62,24 @@ py -3 -m venv .venv
 python -m pip install -r requirements.txt
 ```
 
-Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey), then set it in the current shell. Do not put the key in source files or commit it:
+**macOS or Linux (bash/zsh):**
+
+```sh
+python3 -m venv .venv
+source .venv/bin/activate
+python -m pip install -r requirements.txt
+```
+
+Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey), then set it in the current shell. Do not put the key in source files or commit it. In PowerShell:
 
 ```powershell
 $env:GEMINI_API_KEY = "your-key-here"
+```
+
+In bash or zsh:
+
+```sh
+export GEMINI_API_KEY="your-key-here"
 ```
 
 Generate a worksheet by input name. The program reads `examples/inputs/linear_functions.json`, then writes `examples/worksheets/linear_functions.md` and `examples/reviews/linear_functions.json`:
@@ -71,6 +87,8 @@ Generate a worksheet by input name. The program reads `examples/inputs/linear_fu
 ```powershell
 python -m worksheet_agents --input linear_functions
 ```
+
+The CLI prints the saved paths when generation finishes. A run took about one minute during development; API response time and retries can make it shorter or longer. Wait for the success message or an error before checking the output files.
 
 You can also pass a JSON file path with `--input`, and optionally choose a Markdown path with `--output`.
 
