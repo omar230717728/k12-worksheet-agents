@@ -31,6 +31,13 @@ The roles use separate prompts and structured inputs and outputs. The workflow i
 
 ## Install and run
 
+Clone the private repository after accepting a collaborator invitation:
+
+```powershell
+git clone https://github.com/omar230717728/k12-worksheet-agents.git
+cd k12-worksheet-agents
+```
+
 Use Python 3.10 or newer. Create and activate a virtual environment, then install dependencies:
 
 ```powershell
@@ -75,4 +82,4 @@ The Reviewer is another model call and can miss an error, particularly in calcul
 
 ## Repository submission
 
-The three approved example worksheets and review reports are included. Create a private GitHub repository and invite `NLeins` and `JGonnermann` as collaborators.
+The three approved example worksheets and review reports are included in this private repository. Collaborator invitations have been sent to `NLeins` and `JGonnermann`.
