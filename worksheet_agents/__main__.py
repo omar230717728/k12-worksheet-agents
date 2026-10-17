@@ -1,5 +1,6 @@
 import argparse
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -32,7 +33,7 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     parser.add_argument("--topic")
     parser.add_argument("--grade")
     parser.add_argument("--objective")
-    parser.add_argument("--output", type=Path, help="Optional Markdown path; defaults to examples/worksheets/<input name>.md")
+    parser.add_argument("--output", type=Path, help="Optional Markdown path; defaults to examples/worksheets/<input name or topic>.md")
     parser.add_argument("--model", default="gemini-3.8-flash", help="Gemini model ID")
     parser.add_argument("--max-revisions", type=int, default=1)
     args = parser.parse_args(argv)
@@ -47,7 +48,8 @@ def parse_args(argv: list[str] | None = None) -> argparse.Namespace:
         if args.output is None:
             args.output = EXAMPLES_DIR / "worksheets" / f"{args.input.stem}.md"
     elif args.output is None:
-        parser.error("--output is required when using --subject")
+        topic_name = re.sub(r"[^a-z0-9]+", "_", args.topic.lower()).strip("_") or "worksheet"
+        args.output = EXAMPLES_DIR / "worksheets" / f"{topic_name}.md"
     return args
 
 

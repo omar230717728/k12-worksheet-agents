@@ -74,10 +74,10 @@ python -m worksheet_agents --input linear_functions
 
 You can also pass a JSON file path with `--input`, and optionally choose a Markdown path with `--output`.
 
-Or provide the four fields directly:
+Or provide the four fields directly. The topic becomes the filename, so this writes `examples/worksheets/food_chains.md` and `examples/reviews/food_chains.json`:
 
 ```powershell
-python -m worksheet_agents --subject Science --topic "Food Chains" --grade 5 --objective "Explain how energy moves through a simple food chain" --output outputs/food_chains.md
+python -m worksheet_agents --subject Science --topic "Food Chains" --grade 5 --objective "Explain how energy moves through a simple food chain"
 ```
 
 The review JSON contains the model ID, input, approval status, revision count, and any unresolved issues. The three included examples cover different subjects and grades and were generated with `gemini-3.8-flash`.

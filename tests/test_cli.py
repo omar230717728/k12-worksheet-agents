@@ -17,6 +17,14 @@ class CliTests(unittest.TestCase):
         self.assertEqual(args.input, input_path)
         self.assertEqual(args.output, Path("custom/ecosystems.md"))
 
+    def test_direct_fields_derive_output_from_topic(self):
+        args = parse_args([
+            "--subject", "Science", "--topic", "Food Chains", "--grade", "5",
+            "--objective", "Explain how energy moves through a food chain",
+        ])
+        self.assertEqual(args.output, EXAMPLES_DIR / "worksheets" / "food_chains.md")
+        self.assertEqual(load_request(args).topic, "Food Chains")
+
 
 if __name__ == "__main__":
     unittest.main()
