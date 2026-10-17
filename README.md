@@ -79,4 +79,3 @@ The chosen model is recorded in the review JSON.
 ## Limitations and possible enhancements
 
 The Reviewer is another model call and can miss an error, particularly in calculations. A teacher should inspect material before classroom use. Model responses can vary between runs. The tool does not currently verify alignment to a particular curriculum. Possible enhancements include subject-specific calculation checks, retrieval from an approved curriculum collection, and LangGraph if the workflow grows to need persistence or human approval steps.
-
