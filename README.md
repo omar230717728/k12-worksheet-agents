@@ -10,16 +10,30 @@ A small Python multi-agent system that turns a subject, topic, grade, and learni
 4. The **Reviewer** independently checks objective coverage, grade suitability, facts, examples, and solutions. It returns an approval decision with specific issues.
 5. On rejection, the Writer gets the review issues and revises once by default. The Reviewer checks the revision. The program saves an approved worksheet or a clearly marked draft with its review report.
 
-Example files have matching names in separate folders:
-
-| Folder | Contents |
-| --- | --- |
-| `examples/inputs/` | The four input fields as JSON |
-| `examples/worksheets/` | Approved student worksheets as Markdown |
-| `examples/reviews/` | Review decisions and model metadata as JSON |
-| `examples/drafts/` | Rejected drafts, when a review still fails |
-
 The roles use separate prompts and structured inputs and outputs. The workflow is coordinated by ordinary Python functions. This makes the handoff between agents visible without adding a graph framework for a fixed sequence.
+
+## Project structure
+
+| Path | Responsibility |
+| --- | --- |
+| `worksheet_agents/__main__.py` | CLI arguments, input loading, output paths, and exit codes |
+| `worksheet_agents/models.py` | Pydantic shapes and basic validation for requests and agent responses |
+| `worksheet_agents/prompts.py` | Separate instructions for Planner, Writer, and Reviewer |
+| `worksheet_agents/gemini.py` | One interface for Gemini structured JSON calls and API errors |
+| `worksheet_agents/workflow.py` | Agent order and the bounded review and revision loop |
+| `worksheet_agents/render.py` | Markdown worksheet and JSON review report formatting |
+| `examples/inputs/` | Named JSON requests containing the four required fields |
+| `examples/worksheets/` | Approved Markdown worksheets, named after their inputs |
+| `examples/reviews/` | Review decisions and model metadata, named after their inputs |
+| `examples/drafts/` | Rejected drafts if the final review still finds issues |
+| `tests/` | CLI, schema, error handling, and workflow checks |
+
+The main functions follow the path of one request:
+
+1. `parse_args()` and `load_request()` accept either a named JSON input or four CLI fields, then validate the request. This keeps input and path handling out of the agents.
+2. `run_workflow()` calls Planner, Writer, and Reviewer in order. If the Reviewer rejects a draft, it sends the specific issues back to the Writer and reviews the revision. The revision limit prevents an open ended loop.
+3. `GeminiModel.generate()` sends each prompt with its expected Pydantic response schema and validates the returned JSON. The workflow depends on the small `StructuredModel` interface, so tests can use a fake model without API calls.
+4. `render_markdown()` builds the student worksheet, while `review_report()` records the decision and run metadata. `main()` saves an approved worksheet or a clearly marked rejected draft and returns a distinct exit code.
 
 ## Design decisions
 
