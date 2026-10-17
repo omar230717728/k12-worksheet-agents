@@ -70,7 +70,7 @@ source .venv/bin/activate
 python -m pip install -r requirements.txt
 ```
 
-Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey), then set it in the current shell. Do not put the key in source files or commit it. In PowerShell:
+Create a Gemini API key in [Google AI Studio](https://aistudio.google.com/apikey), then set it in the current shell. In PowerShell:
 
 ```powershell
 $env:GEMINI_API_KEY = "your-key-here"
